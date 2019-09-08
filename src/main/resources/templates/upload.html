@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>upload</title>
+    <script type="text/javascript" src="jquery-3.2.1.min.js"></script>
+    <script type="text/javascript">
+    $(function () {
+
+        /*点击添加按钮可以进行多文件上传*/
+        $("#addInput").click(function(){
+            $("#inputs").append("<input type='file' name='file'><br>");
+        });
+
+        $("#submit").click(function () {
+/*            var data = $("#forms").serialize();  zhe这种方式不行*/
+            var formData = new FormData($("#forms")[0]);
+
+           $.ajax({
+               type : "post",
+               url : "/uploadFiles",
+               data : formData,
+               contentType : false,
+               processData : false,
+               success : function (data) {
+
+                 if (200 == data.code || 401 == data.code){
+                     var list = eval(data.result);
+
+                     for (var i = 0;i < list.length;i++){
+                         var path = list[i];
+                        alert(path);
+                         $("#showPic").append("<img src="+path+" />");
+                     }
+                 }else {
+                     alert("上传失败！");
+                 }
+               },
+               error : function () {
+                   alert("出错了！！");
+               }
+           }) ;
+        });
+    })
+
+    </script>
+</head>
+<body>
+<form id="forms">
+    <input type="button" value="添加文件" id="addInput"><br>
+    请选择文件进行上传：<br>
+
+    <div id="inputs"></div>
+<input id="submit" type="button" value="提交">
+</form>
+<div id="showPic"></div>
+</body>
+</html>
